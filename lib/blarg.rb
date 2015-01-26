@@ -2,7 +2,7 @@ require "blarg/version"
 require 'pry'
 require 'camping'
 
-BLOG_REPO = '/Users/brit/projects/improvedmeans/'
+BLOG_REPO = '/Users/vedikabirla/Documents/ROR/blarg/improvedmeans/'
 
 Camping.goes :Blarg
 
@@ -187,6 +187,38 @@ end
 
 def Blarg.create
   Blarg::Models.create_schema
+end
+
+def top_tags
+  topTags = {}
+  Blarg::Models::Post.find_each do |p|
+    p.tags.each do |eachTag|
+      if !(topTags.has_key?(eachTag))
+        topTags[eachTag] += 1
+      else
+        topTags[eachTag] = 1
+      end
+    end
+  end
+  tenTags = topTags.sort_by {|k, v| v}.reverse
+  puts tenTags.first 10
+end
+
+def top_months
+  topMonths = {}
+  Blarg::Models::Post.group(:date).find_each do |d|
+    date = d.to_s
+    #get month by substringing date
+    d.tags.each do |eachMonth|
+      if !(topMonths.has_key?(eachMonth))
+        topMonths[eachMonth] += 1
+      else
+        topMonths[eachMonth]=1
+      end
+    end
+  end
+  topSixMonths = topMonths.sort_by {|k, v| v}.reverse
+  puts topSixMonths.first 6
 end
 
 #blog = BlogApp.new
